@@ -28,9 +28,11 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from . import ExtendedOpenAIConfigEntry
 from .const import (
     CONF_FUNCTION_TOOLS,
+    CONF_MCP_SERVERS,
     CONF_PROMPT,
     CONF_SKILLS,
     DEFAULT_CONF_FUNCTION_TOOLS,
+    DEFAULT_CONF_MCP_SERVERS,
     DEFAULT_PROMPT,
     DEFAULT_WORKING_DIRECTORY,
     DOMAIN,
@@ -40,6 +42,7 @@ from .entity import ExtendedOpenAIBaseLLMEntity
 from .exceptions import FunctionLoadFailed, FunctionNotFound, InvalidFunction
 from .functions import get_function
 from .helpers import get_exposed_entities
+from .mcp import discover_mcp_tools
 from .skills import Skill, SkillManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -124,7 +127,7 @@ class ExtendedOpenAIAgentEntity(
         exposed_entities = self._get_exposed_entities()
 
         # Get function tools
-        function_tools = self._get_function_tools()
+        function_tools = await self._get_function_tools()
 
         # Build custom prompt with exposed entities
         system_prompt = self._build_system_prompt(
@@ -222,7 +225,7 @@ class ExtendedOpenAIAgentEntity(
     def _get_exposed_entities(self) -> list[dict[str, Any]]:
         return get_exposed_entities(self.hass)
 
-    def _get_function_tools(self) -> list[dict[str, Any]]:
+    async def _get_function_tools(self) -> list[dict[str, Any]]:
         """Get custom functions configuration."""
         try:
             function_tools_config = self.subentry.data.get(CONF_FUNCTION_TOOLS)
@@ -243,8 +246,11 @@ class ExtendedOpenAIAgentEntity(
                             function_tool["function"] = function.validate_schema(
                                 function_config
                             )
-
-            return function_tools or []
+            mcp_tools = await discover_mcp_tools(
+                self.hass,
+                self.subentry.data.get(CONF_MCP_SERVERS, DEFAULT_CONF_MCP_SERVERS),
+            )
+            return (function_tools or []) + mcp_tools
         except (InvalidFunction, FunctionNotFound) as e:
             raise e
         except Exception as e:

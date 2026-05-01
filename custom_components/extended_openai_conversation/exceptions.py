@@ -134,3 +134,42 @@ class InvalidFunction(HomeAssistantError):
     def __str__(self) -> str:
         """Return string representation."""
         return f"failed to validate function `{self.function_name}` ({self.__cause__})"
+
+
+class McpConfigError(HomeAssistantError):
+    """When MCP server configuration is invalid."""
+
+    def __init__(self, message: str) -> None:
+        """Initialize error."""
+        super().__init__(self, message)
+        self.message = message
+
+    def __str__(self) -> str:
+        """Return string representation."""
+        return self.message
+
+
+class McpServerError(HomeAssistantError):
+    """When MCP server call fails."""
+
+    def __init__(self, message: str) -> None:
+        """Initialize error."""
+        super().__init__(self, message)
+        self.message = message
+
+    def __str__(self) -> str:
+        """Return string representation."""
+        return self.message
+
+
+class McpToolExecutionError(HomeAssistantError):
+    """When MCP tool execution fails."""
+
+    def __init__(self, message: str) -> None:
+        """Initialize error."""
+        super().__init__(self, message)
+        self.message = message
+
+    def __str__(self) -> str:
+        """Return string representation."""
+        return self.message

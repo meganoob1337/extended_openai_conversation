@@ -100,6 +100,7 @@ DEFAULT_MAX_FUNCTION_CALLS_PER_CONVERSATION = 10
 CONF_SHORTEN_TOOL_CALL_ID = "shorten_tool_call_id"
 DEFAULT_SHORTEN_TOOL_CALL_ID = False
 CONF_FUNCTION_TOOLS = "functions"
+CONF_MCP_SERVERS = "mcp_servers"
 DEFAULT_CONF_FUNCTION_TOOLS = [
     {
         "spec": {
@@ -231,6 +232,19 @@ DEFAULT_CONF_FUNCTION_TOOLS = [
         "function": {"type": "bash", "command": "{{command}}"},
     },
 ]
+DEFAULT_CONF_MCP_SERVERS = """# Example MCP server configuration
+# servers:
+#   - name: docs
+#     url: https://example.com/mcp
+#     transport: streamable_http
+#     timeout: 20
+#     headers:
+#       Authorization: Bearer your-token
+#     allow_tools:
+#       - search_docs
+#       - get_page
+servers: []
+"""
 CONF_CONTEXT_THRESHOLD = "context_threshold"
 DEFAULT_CONTEXT_THRESHOLD = 40000
 CONTEXT_TRUNCATE_STRATEGIES = [{"key": "clear", "label": "Clear All Messages"}]

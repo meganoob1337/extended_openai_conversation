@@ -53,6 +53,7 @@ from .const import (
 from .exceptions import FunctionNotFound, ParseArgumentsFailed, TokenLengthExceededError
 from .functions import get_function
 from .helpers import get_model_config
+from .mcp import execute_mcp_tool
 
 if TYPE_CHECKING:
     from . import ExtendedOpenAIConfigEntry
@@ -497,6 +498,15 @@ class ExtendedOpenAIBaseLLMEntity(Entity):
     ) -> conversation.ToolResultContent:
         """Execute a custom function."""
         arguments: dict[str, Any] = tool_input.tool_args
+        if function_tool.get("source") == "mcp":
+            result = await execute_mcp_tool(self.hass, function_tool, arguments)
+            return conversation.ToolResultContent(
+                agent_id=self.entity_id,
+                tool_call_id=tool_input.id,
+                tool_name=tool_input.tool_name,
+                tool_result={"result": str(result)},
+            )
+
         function_config = function_tool["function"]
         function = get_function(function_config["type"])
 

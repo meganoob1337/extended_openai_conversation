@@ -161,6 +161,36 @@ Connection settings (API key, base URL, and similar) live on the main integratio
     See [Functions Overview](/functions/overview) for detailed information.
   </Accordion>
 
+  <Accordion title="MCP Servers">
+    **Type**: YAML/JSON
+
+    **Default**: Empty (`servers: []`)
+
+    Configure remote MCP servers (HTTP/SSE) and choose which tools are exposed to the model.
+
+    - `servers[].name` - Unique server name
+    - `servers[].url` - Remote MCP endpoint URL
+    - `servers[].transport` - `streamable_http`, `http`, or `sse`
+    - `servers[].headers` - Optional HTTP headers (for auth tokens, etc.)
+    - `servers[].allow_tools` - Tool allowlist for this server (required for safe exposure)
+
+    ```yaml
+    servers:
+      - name: docs
+        url: https://example.com/mcp
+        transport: streamable_http
+        headers:
+          Authorization: Bearer your-token
+        allow_tools:
+          - search_docs
+          - get_page
+    ```
+
+    <Warning>
+    Only tools listed in `allow_tools` are exposed. Keep allowlists tight and avoid enabling untrusted remote servers.
+    </Warning>
+  </Accordion>
+
   <Accordion title="Context Threshold">
     **Type**: Integer
 
