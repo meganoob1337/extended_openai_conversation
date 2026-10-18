@@ -500,11 +500,11 @@ class ExtendedOpenAIBaseLLMEntity(Entity):
         arguments: dict[str, Any] = tool_input.tool_args
         if function_tool.get("source") == "mcp":
             result = await execute_mcp_tool(self.hass, function_tool, arguments)
-            return conversation.ToolResultContent(
+            return _make_tool_result_content(
                 agent_id=self.entity_id,
                 tool_call_id=tool_input.id,
                 tool_name=tool_input.tool_name,
-                tool_result={"result": str(result)},
+                data={"result": str(result)},
             )
 
         function_config = function_tool["function"]

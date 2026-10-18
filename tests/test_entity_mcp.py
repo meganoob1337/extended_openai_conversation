@@ -6,7 +6,10 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from custom_components.extended_openai_conversation.entity import ExtendedOpenAIBaseLLMEntity
+from custom_components.extended_openai_conversation.entity import (
+    ExtendedOpenAIBaseLLMEntity,
+    _tool_result_data,
+)
 
 
 @pytest.mark.asyncio
@@ -44,4 +47,4 @@ async def test_execute_function_tool_routes_to_mcp(hass: MagicMock, monkeypatch)
 
     mock_execute.assert_awaited_once()
     assert tool_result.tool_name == "mcp__docs__search"
-    assert tool_result.tool_result["result"] == "mcp result"
+    assert _tool_result_data(tool_result) == {"result": "mcp result"}
